@@ -42,7 +42,7 @@ export default class ReactForm extends React.Component {
     } else if (item.element === 'DatePicker') {
       $item.value = ref.state.value;
     } else if (item.element === 'Camera') {
-      $item.value = ref.state.img.replace('data:image/png;base64,', '');
+      $item.value = ref.state.img;
     } else if (ref && ref.inputField) {
       $item = ReactDOM.findDOMNode(ref.inputField.current);
       if (typeof $item.value === 'string') {
@@ -99,7 +99,7 @@ export default class ReactForm extends React.Component {
           if ($item.value === 0) {
             invalid = true;
           }
-        } else if ($item.value === undefined || $item.value.length < 1) {
+        } else if ($item.value === undefined || ($item.value !== null && $item.value.length < 1)) {
           invalid = true;
         }
       }

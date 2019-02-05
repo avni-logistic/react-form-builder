@@ -1,7 +1,9 @@
 .react-form-builder {
   .react-form-builder-preview {
+    margin-left: 160px; /* Same as the width of the sidenav */
+    padding: 0px 10px;
     position: relative;
-    width: 70%;
+    width: 100%;
     border: 1px solid #ddd;
     background: #fafafa;
     padding: 10px;
@@ -221,9 +223,15 @@
   }
 
   .react-form-builder-toolbar {
+
+    height: 100%;
+    position: fixed;
+    z-index: 1;
+    left: 40px;
+    overflow-x: hidden;
+    padding-top: 20px;
     width: 250px;
     background: #fff;
-    margin-top: -30px;
 
     h4 {
       margin-top: 0;
@@ -404,7 +412,7 @@
 }
 
 .form-place-holder {
-  margin:10px; 
+  margin:10px;
   border:2px dashed #bbb;
   -moz-border-radius:5px;
   -webkit-border-radius:5px;

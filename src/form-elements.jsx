@@ -720,17 +720,13 @@ class Camera extends React.Component {
     const name = this.props.data.field_name;
     const fileInputStyle = this.state.img ? { display: 'none' } : null;
     if (this.props.data.pageBreakBefore) { baseClasses += ' alwaysbreak'; }
-    let sourceDataURL;
-    if (this.props.read_only === true && this.props.defaultValue && this.props.defaultValue.length > 0) {
-      sourceDataURL = `data:image/png;base64,${this.props.defaultValue}`;
-    }
     return (
       <div className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="form-group">
           <ComponentLabel {...this.props} />
           {this.props.read_only === true && this.props.defaultValue && this.props.defaultValue.length > 0
-            ? (<div><img src={sourceDataURL} /></div>)
+            ? (<div><img src={this.props.defaultValue} /></div>)
             : (<div className="image-upload-container">
 
             <div style={fileInputStyle}>

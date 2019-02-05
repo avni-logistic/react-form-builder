@@ -20,6 +20,6 @@ PlaceHolder.propTypes = {
 };
 
 PlaceHolder.defaultProps = {
-  text: 'Drop a item here....',
+  text: 'Tap on item or Drop a item here....',
   show: false,
 };
