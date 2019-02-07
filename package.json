@@ -1,12 +1,12 @@
 {
   "name": "react-form-builder5",
-  "version": "0.1.1",
+  "version": "0.2.1",
   "description": "A complete form builder for react.",
   "main": "lib/index.js",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kiho/react-form-builder.git"
+    "url": "git+https://github.com/avni-logistic/react-form-builder"
   },
   "files": [
     "lib",

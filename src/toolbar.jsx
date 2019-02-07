@@ -44,6 +44,12 @@ export default class Toolbar extends React.Component {
           { value: 'place_holder_option_2', text: 'Place holder option 2', key: `radiobuttons_option_${ID.uuid()}` },
           { value: 'place_holder_option_3', text: 'Place holder option 3', key: `radiobuttons_option_${ID.uuid()}` },
         ];
+      case 'Math':
+        return [
+          { value: '', text: '', key: `math_option_${ID.uuid()}` },
+          { value: '', text: '', key: `math_option_${ID.uuid()}` },
+          { value: '', text: '', key: `math_option_${ID.uuid()}` },
+        ];
       default:
         return [];
     }
@@ -51,6 +57,17 @@ export default class Toolbar extends React.Component {
 
   _defaultItems() {
     return [
+      {
+        key: 'Math',
+        name: 'Math',
+        icon: 'fa fa-plus',
+        canHaveAnswer: true,
+        content: 'Placeholder Text...',
+        options: [],
+        label: 'Placeholder Label',
+        field_name: 'math_',
+        extraInput: ''
+      },
       {
         key: 'Header',
         name: 'Header Text',
@@ -219,6 +236,7 @@ export default class Toolbar extends React.Component {
       text: item.name,
       static: item.static,
       required: false,
+      extraInput: item.extraInput
     };
 
     if (item.static) {
@@ -274,7 +292,7 @@ export default class Toolbar extends React.Component {
 
   render() {
     return (
-      <div className="react-form-builder-toolbar pull-right">
+      <div className="react-form-builder-toolbar pull-left">
         <h4>Toolbox</h4>
         <ul>
           {

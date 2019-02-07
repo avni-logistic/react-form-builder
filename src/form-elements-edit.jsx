@@ -5,7 +5,7 @@ import {
 } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import { Editor } from 'react-draft-wysiwyg';
-
+import DynamicInputList from './dynamic-input-list';
 import DynamicOptionList from './dynamic-option-list';
 
 const toolbar = {
@@ -46,7 +46,8 @@ export default class FormElementsEdit extends React.Component {
   }
 
   onEditorStateChange(index, property, editorContent) {
-    const html = draftToHtml(convertToRaw(editorContent.getCurrentContent())).replace(/<p>/g, '<div>').replace(/<\/p>/g, '</div>');
+    // const html = draftToHtml(convertToRaw(editorContent.getCurrentContent())).replace(/<p>/g, '<div>').replace(/<\/p>/g, '</div>');
+    const html = draftToHtml(convertToRaw(editorContent.getCurrentContent())).replace(/<p>/g,'').replace(/<\/p>/g, '');
     const this_element = this.state.element;
     this_element[property] = html;
 
@@ -91,14 +92,14 @@ export default class FormElementsEdit extends React.Component {
       this_files.unshift({ id: '', file_name: '' });
     }
 
-    let editorState;
+    let editorStateContent;
+    let editorStateLabel;
     if (this.props.element.hasOwnProperty('content')) {
-      editorState = this.convertFromHTML(this.props.element.content);
+      editorStateContent = this.convertFromHTML(this.props.element.content);
     }
     if (this.props.element.hasOwnProperty('label')) {
-      editorState = this.convertFromHTML(this.props.element.label);
+      editorStateLabel = this.convertFromHTML(this.props.element.label);
     }
-
     return (
       <div>
         <div className="clearfix">
@@ -111,7 +112,7 @@ export default class FormElementsEdit extends React.Component {
 
             <Editor
               toolbar={toolbar}
-              defaultEditorState={editorState}
+              defaultEditorState={editorStateContent}
               onBlur={this.updateElement.bind(this)}
               onEditorStateChange={this.onEditorStateChange.bind(this, 0, 'content')} />
           </div>
@@ -158,12 +159,24 @@ export default class FormElementsEdit extends React.Component {
             </div>
           </div>
         }
+
+        { this.props.element.hasOwnProperty('options') && this.state.element.element === 'Math' &&
+          <DynamicInputList showCorrectColumn={this.props.showCorrectColumn} data={this.props.preview.state.data} updateElement={this.props.updateElement} preview={this.props.preview} element={this.props.element} key={this.props.element.options.length} />
+        }
+
+        { this.props.element.hasOwnProperty('extraInput') && this.state.element.element === 'Math' &&
+          <div className="form-group">
+            <input id="correctAnswer" type="text" placeholder="Hourly Pay" className="form-control" defaultValue={this.props.element.extraInput} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'extraInput', 'value')} />
+          </div>
+        }
+
+
         { this.props.element.hasOwnProperty('label') &&
           <div className="form-group">
             <label>Display Label</label>
             <Editor
               toolbar={toolbar}
-              defaultEditorState={editorState}
+              defaultEditorState={editorStateLabel}
               onBlur={this.updateElement.bind(this)}
               onEditorStateChange={this.onEditorStateChange.bind(this, 0, 'label')} />
 
@@ -291,7 +304,7 @@ export default class FormElementsEdit extends React.Component {
             <input id="correctAnswer" type="text" className="form-control" defaultValue={this.props.element.correct} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'correct', 'value')} />
           </div>
         }
-        { this.props.element.hasOwnProperty('options') &&
+        { this.props.element.hasOwnProperty('options') && this.state.element.element !== 'Math' &&
           <DynamicOptionList showCorrectColumn={this.props.showCorrectColumn} data={this.props.preview.state.data} updateElement={this.props.updateElement} preview={this.props.preview} element={this.props.element} key={this.props.element.options.length} />
         }
       </div>

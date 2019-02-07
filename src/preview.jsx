@@ -130,12 +130,12 @@ export default class Preview extends React.Component {
             <FormElementsEdit showCorrectColumn={this.props.showCorrectColumn} files={this.props.files} manualEditModeOff={this.props.manualEditModeOff} preview={this} element={this.props.editElement} updateElement={this.updateElement} />
           }
         </div>
+        <PlaceHolder id="form-place-holder" show={items.length === 0} index={items.length} moveCard={this.cardPlaceHolder} insertCard={this.insertCard}/>
         <div className="Sortable">{items}</div>
-         <PlaceHolder id="form-place-holder" show={items.length === 0} index={items.length} moveCard={this.cardPlaceHolder} insertCard={this.insertCard}/>
       </div>
     );
   }
 }
 Preview.defaultProps = {
-  showCorrectColumn: false, files: [], editMode: false, editElement: null, className: 'react-form-builder-preview pull-left',
+  showCorrectColumn: false, files: [], editMode: false, editElement: null, className: 'react-form-builder-preview pull-right',
 };

@@ -4,11 +4,12 @@ import * as BaseFormElements from './form-elements';
 
 const {
   Header, Paragraph, Label, LineBreak, TextInput, NumberInput, TextArea, Dropdown, Checkboxes,
-  DatePicker, RadioButtons, Image, Rating, Tags, Signature, HyperLink, Download, Camera, Range,
+  DatePicker, RadioButtons, Image, Rating, Tags, Signature, HyperLink, Download, Camera, Range, Math
 } = BaseFormElements;
 
 const FormElements = {};
 
+FormElements.Math = SortableElement(Math);
 FormElements.Header = SortableElement(Header);
 FormElements.Paragraph = SortableElement(Paragraph);
 FormElements.Label = SortableElement(Label);

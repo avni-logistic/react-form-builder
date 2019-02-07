@@ -1,14 +1,14 @@
 .react-form-builder {
   .react-form-builder-preview {
-    margin-left: 160px; /* Same as the width of the sidenav */
-    padding: 0px 10px;
-    position: relative;
-    width: 100%;
+    // margin-left: 250px; /* Same as the width of the sidenav */
+    // padding: 0px 10px;
+    position: initial;
+    width: 70%;
     border: 1px solid #ddd;
     background: #fafafa;
     padding: 10px;
     box-shadow: 0 0 2px 1px rgba(0,0,0,0.1);
-    min-height: 750px;
+    // min-height: 750px;
 
     .preview-page-break {
       padding: 5px 0;
@@ -60,10 +60,10 @@
       position: fixed;
       background: #fafafa;
       padding: 30px;
-      border-left: 0;
+      border-right: 0;
       box-shadow: none;
       top: 0;
-      left: -1000px;
+      right: -1000px;
       height: 100%;
       // width: 0;
       width: 715px;
@@ -135,6 +135,8 @@
     .Sortable {
       transition: opacity .25s ease-in;
       position: relative;
+      overflow-x: hidden;
+      height: calc(100% - 200px);
       cursor: move;
       -webkit-touch-callout: none;
       -webkit-user-select: none;
@@ -213,10 +215,10 @@
       // }
       .edit-form {
         z-index: 2000;
-        border-right: 1px solid #ddd;
+        border-left: 1px solid #ddd;
         box-shadow: 0 0 2px 1px rgba(0,0,0,0.1);
         // width: 80%;
-        left: 0;
+        right: 0;
         transition: .5s;
       }
     }
@@ -224,12 +226,8 @@
 
   .react-form-builder-toolbar {
 
-    height: 100%;
-    position: fixed;
-    z-index: 1;
-    left: 40px;
     overflow-x: hidden;
-    padding-top: 20px;
+    height: calc(100% - 75px);
     width: 250px;
     background: #fff;
 

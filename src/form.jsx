@@ -9,7 +9,7 @@ import FormValidator from './form-validator';
 import * as FormElements from './form-elements';
 
 const {
-  Image, Checkboxes, Signature, Download, Camera
+  Image, Checkboxes, Signature, Download, Camera, Math
 } = FormElements;
 
 export default class ReactForm extends React.Component {
@@ -93,6 +93,18 @@ export default class ReactForm extends React.Component {
           // errors.push(item.label + ' is required!');
           invalid = true;
         }
+      } else if (item.element === 'Math') {
+        const extraInput = this._getItemValue(item, ref).value;
+        let optionFill = 0;
+        item.options.forEach(option => {
+          const $option = ReactDOM.findDOMNode(ref.options[`child_ref_${option.key}`]);
+          if ($option.value !== undefined || $option.value !== '') {
+            optionFill += 1;
+          }
+        });
+        if (optionFill < 1 || extraInput < 1) {
+          invalid = true;
+        }
       } else {
         const $item = this._getItemValue(item, ref);
         if (item.element === 'Rating') {
@@ -119,6 +131,25 @@ export default class ReactForm extends React.Component {
         }
       });
       itemData.value = checked_options;
+    } else if (item.element === 'Math') {
+      const extraInput = this._getItemValue(item, ref).value;
+      const Math_option = [];
+      let total = 0;
+      item.options.forEach(option => {
+        const $option = ReactDOM.findDOMNode(ref.options[`child_ref_${option.key}`]);
+        Math_option.push({ [$option.name]: $option.value });
+        if ($option.value !== undefined) {
+          const val = parseInt($option.value); //eslint-disable-line
+          total += val;
+        }
+      });
+      if (extraInput > 1) {
+        total *= extraInput;
+      }
+      itemData.value = `${item.content} ${total} ${item.label}`;
+      // itemData.value = [];
+      // itemData.value.push(Math_option);
+      // itemData.value.push(extraInput);
     } else {
       if (!ref) return null;
       itemData.value = this._getItemValue(item, ref).value;
@@ -161,13 +192,14 @@ export default class ReactForm extends React.Component {
     // Only submit if there are no errors.
     if (errors.length < 1) {
       const { onSubmit } = this.props;
-      if (onSubmit) {
+      // if (onSubmit) {
         const data = this._collectFormData(this.props.data);
-        onSubmit(data);
-      } else {
-        const $form = ReactDOM.findDOMNode(this.form);
-        $form.submit();
-      }
+        console.log('data', data);
+      //   onSubmit(data);
+      // } else {
+      //   const $form = ReactDOM.findDOMNode(this.form);
+      //   $form.submit();
+      // }
     }
   }
 
@@ -185,7 +217,11 @@ export default class ReactForm extends React.Component {
       }
 
       if (this._isInvalid(item)) {
-        errors.push(`${item.label} is required!`);
+        if (item.element === 'Math') {
+          errors.push(`${item.text} is required!`);
+        } else {
+          errors.push(`${item.label} is required!`);
+        }
       }
 
       if (this.props.validateForCorrectness && this._isIncorrect(item)) {
@@ -242,6 +278,8 @@ export default class ReactForm extends React.Component {
           return <Signature ref={c => this.inputs[item.field_name] = c} read_only={this.props.read_only || item.readOnly} mutable={true} key={`form_${item.id}`} data={item} defaultValue={this.props.answer_data[item.field_name]} />;
         case 'Checkboxes':
           return <Checkboxes ref={c => this.inputs[item.field_name] = c} read_only={this.props.read_only} handleChange={this.handleChange} mutable={true} key={`form_${item.id}`} data={item} defaultValue={this.props.answer_data[item.field_name]} />;
+        case 'Math':
+          return <Math ref={c => this.inputs[item.field_name] = c} read_only={this.props.read_only} handleChange={this.handleChange} mutable={true} key={`form_${item.id}`} data={item} defaultValue={this.props.answer_data[item.field_name]} />;
         case 'Image':
           return <Image ref={c => this.inputs[item.field_name] = c} handleChange={this.handleChange} mutable={true} key={`form_${item.id}`} data={item} defaultValue={this.props.answer_data[item.field_name]} />;
         case 'Download':
@@ -259,7 +297,6 @@ export default class ReactForm extends React.Component {
 
     const actionName = (this.props.action_name) ? this.props.action_name : 'Submit';
     const backName = (this.props.back_name) ? this.props.back_name : 'Cancel';
-
     return (
       <div>
         <FormValidator emitter={this.emitter} />

@@ -72,6 +72,124 @@ class Header extends React.Component {
   }
 }
 
+class Math extends React.Component {
+  constructor(props) {
+    super(props);
+    this.options = {};
+    this.inputField = React.createRef();
+    this.state = {
+      optionValue: {},
+      totalCount: 0,
+      totalPay: 1
+    };
+  }
+
+  handleChange = (e) => {
+    this.setState({ optionValue: { ...this.state.optionValue, [e.target.name]: e.target.value } });
+    setTimeout(() => {
+      this.handleMath();
+    }, 200);
+  }
+
+  handleMath = () => {
+    const { options } = this.props.data;
+    const { optionValue, totalPay } = this.state;
+    let total = 0;
+    options.map((option) => { //eslint-disable-line
+      if (optionValue[`option_${option.key}`] !== undefined && optionValue[`option_${option.key}`] !== '') {
+        const val = parseInt(optionValue[`option_${option.key}`]); //eslint-disable-line
+        total += val;
+      }
+    });
+    if (totalPay > 1) {
+      total *= totalPay;
+    }
+    this.setState({ totalCount: total });
+  }
+
+  handleChangePay = (e) => {
+    this.setState({ totalPay: e.target.value });
+    setTimeout(() => {
+      this.handleMath();
+    }, 200);
+  }
+
+  render() {
+    const self = this;
+    let classNames = 'col-md-3';
+    if (this.props.data.inline) { classNames += ' option-inline'; }
+
+    let baseClasses = 'SortableItem rfb-item';
+    if (this.props.data.pageBreakBefore) { baseClasses += ' alwaysbreak'; }
+    return (
+      <div className={baseClasses}>
+        <ComponentHeader {...this.props} />
+          <b>Math</b>
+        { this.props.defaultValue === undefined ?
+          (<div className="form-group">
+          {/* <p dangerouslySetInnerHTML={{ __html: myxss.process(this.props.data.content) }} /> */}
+            <div className="row">
+              {this.props.data.options.map((option) => {
+                const this_key = `preview_${option.key}`;
+                const props = {};
+                props.name = `option_${option.key}`;
+                props.type = 'number';
+                props.placeholder = 'hours';
+                props.defaultValue = option.value;
+                if (this.props.read_only) {
+                  props.disabled = 'disabled';
+                }
+                props.onChange = this.handleChange;
+                props.className = 'form-control';
+                return (
+                  <div className={classNames} key={this_key}>
+                    {/* <input {...props} /> */}
+                    <input ref={c => {
+                      if (c && self.props.mutable) {
+                        self.options[`child_ref_${option.key}`] = c;
+                      }
+                    } } {...props}/>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="row">
+              <div className="col-md-3" style={{ padding: '10px' }}>
+                <input
+                  name={self.props.data.field_name}
+                  defaultValue={self.props.data.extraInput}
+                  ref={this.inputField}
+                  type="number"
+                  className="form-control"
+                  placeholder="hourly pay"
+                  onChange={this.handleChangePay}
+                  disabled={this.props.read_only}
+                  />
+              </div>
+            </div>
+            {this.state.totalCount > 0 && (
+              <div>
+                <h5>Result:</h5>
+                {/* {`${this.props.data.content} ${this.state.totalCount} ${this.props.data.label}`} */}
+                <span dangerouslySetInnerHTML={{ __html: myxss.process(this.props.data.content) }} />
+                {` ${this.state.totalCount} `}
+                <span dangerouslySetInnerHTML={{ __html: myxss.process(this.props.data.label) }} />
+              </div>
+            )}
+            {/* <p dangerouslySetInnerHTML={{ __html: myxss.process(this.props.data.label) }} /> */}
+          </div>
+          )
+          : (
+            <div style={{ background: 'gainsboro', padding: '9px' }}>
+              <span dangerouslySetInnerHTML={{ __html: myxss.process(this.props.defaultValue) }} />
+            </div>
+          )}
+      </div>
+    );
+  }
+}
+
+
 class Paragraph extends React.Component {
   render() {
     let classNames = 'static';
@@ -833,6 +951,7 @@ class Range extends React.Component {
   }
 }
 
+FormElements.Math = Math;
 FormElements.Header = Header;
 FormElements.Paragraph = Paragraph;
 FormElements.Label = Label;
