@@ -79,8 +79,7 @@ class Math extends React.Component {
     this.inputField = React.createRef();
     this.state = {
       optionValue: {},
-      totalCount: 0,
-      totalPay: 1
+      totalString: ''
     };
   }
 
@@ -95,24 +94,18 @@ class Math extends React.Component {
     const { options } = this.props.data;
     const { optionValue, totalPay } = this.state;
     let total = 0;
+    let totalString = '';
     options.map((option) => { //eslint-disable-line
+
       if (optionValue[`option_${option.key}`] !== undefined && optionValue[`option_${option.key}`] !== '') {
-        const val = parseInt(optionValue[`option_${option.key}`]); //eslint-disable-line
-        total += val;
+        const val = optionValue[`option_${option.key}`]; //eslint-disable-line
+        totalString = `${totalString} ${optionValue[`option_${option.key}`]} ${option.operation}`;
       }
     });
-    if (totalPay > 1) {
-      total *= totalPay;
-    }
-    this.setState({ totalCount: total });
+    this.setState({totalString});
   }
 
-  handleChangePay = (e) => {
-    this.setState({ totalPay: e.target.value });
-    setTimeout(() => {
-      this.handleMath();
-    }, 200);
-  }
+
 
   render() {
     const self = this;
@@ -121,6 +114,11 @@ class Math extends React.Component {
 
     let baseClasses = 'SortableItem rfb-item';
     if (this.props.data.pageBreakBefore) { baseClasses += ' alwaysbreak'; }
+    let extraElementValue = ''
+      this.props.data.options.map((item) => {
+        extraElementValue = `${extraElementValue} ${item.value} ${item.operation}`
+      })
+      // console.log('this.props.data.options', this.props.data.options);
     return (
       <div className={baseClasses}>
         <ComponentHeader {...this.props} />
@@ -134,13 +132,13 @@ class Math extends React.Component {
                 const props = {};
                 props.name = `option_${option.key}`;
                 props.type = 'number';
-                props.placeholder = 'hours';
                 props.defaultValue = option.value;
                 if (this.props.read_only) {
                   props.disabled = 'disabled';
                 }
                 props.onChange = this.handleChange;
                 props.className = 'form-control';
+                props.min = '0';
                 return (
                   <div className={classNames} key={this_key}>
                     {/* <input {...props} /> */}
@@ -154,8 +152,8 @@ class Math extends React.Component {
               })}
             </div>
             <div className="row">
-              <div className="col-md-3" style={{ padding: '10px' }}>
-                <input
+              <div className="col-md-12" style={{ padding: '10px' }}>
+                {/* <input
                   name={self.props.data.field_name}
                   defaultValue={self.props.data.extraInput}
                   ref={this.inputField}
@@ -164,18 +162,21 @@ class Math extends React.Component {
                   placeholder="hourly pay"
                   onChange={this.handleChangePay}
                   disabled={this.props.read_only}
-                  />
+                  /> */}
+                  <label className="control-label">{extraElementValue.replace(/[^0-9]$/g, '')}</label>
               </div>
             </div>
-            {this.state.totalCount > 0 && (
+
               <div>
-                <h5>Result:</h5>
+                <b>Result</b>
                 {/* {`${this.props.data.content} ${this.state.totalCount} ${this.props.data.label}`} */}
-                <span dangerouslySetInnerHTML={{ __html: myxss.process(this.props.data.content) }} />
-                {` ${this.state.totalCount} `}
+                {/* {`${this.state.totalString.replace(/[^0-9]$/g, '')} =  ${eval(this.state.totalString.replace(/[^0-9]$/g, ''))}`} */}
+                <p><span dangerouslySetInnerHTML={{ __html: myxss.process(this.props.data.content) }} />
+                {` ${this.state.totalString !== '' ? eval(this.state.totalString.replace(/[^0-9]$/g, '')) : ''} `}
                 <span dangerouslySetInnerHTML={{ __html: myxss.process(this.props.data.label) }} />
+                </p>
               </div>
-            )}
+
             {/* <p dangerouslySetInnerHTML={{ __html: myxss.process(this.props.data.label) }} /> */}
           </div>
           )

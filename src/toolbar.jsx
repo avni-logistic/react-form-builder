@@ -46,9 +46,9 @@ export default class Toolbar extends React.Component {
         ];
       case 'Math':
         return [
-          { value: '', text: '', key: `math_option_${ID.uuid()}` },
-          { value: '', text: '', key: `math_option_${ID.uuid()}` },
-          { value: '', text: '', key: `math_option_${ID.uuid()}` },
+          { value: 'Number', text: 'Number', key: `math_option_${ID.uuid()}`, operation: '+' },
+          { value: 'Number', text: 'Number', key: `math_option_${ID.uuid()}`, operation: '+' },
+          { value: 'Number', text: 'Number', key: `math_option_${ID.uuid()}`, operation: '' },
         ];
       default:
         return [];

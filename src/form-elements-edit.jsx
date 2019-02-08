@@ -100,6 +100,15 @@ export default class FormElementsEdit extends React.Component {
     if (this.props.element.hasOwnProperty('label')) {
       editorStateLabel = this.convertFromHTML(this.props.element.label);
     }
+    let extraElementValue;
+    if(this.state.element.element === 'Math')
+    {
+      let value = '';
+      this.state.element.options.map((item) => {
+        value = `${value} ${item.value} ${item.operation}`
+      })
+      extraElementValue = value;
+    }
     return (
       <div>
         <div className="clearfix">
@@ -166,7 +175,9 @@ export default class FormElementsEdit extends React.Component {
 
         { this.props.element.hasOwnProperty('extraInput') && this.state.element.element === 'Math' &&
           <div className="form-group">
-            <input id="correctAnswer" type="text" placeholder="Hourly Pay" className="form-control" defaultValue={this.props.element.extraInput} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'extraInput', 'value')} />
+            {/* <input id="correctAnswer" type="text" placeholder="Hourly Pay" className="form-control" defaultValue={extraElementValue} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'extraInput', 'value')} /> */}
+            <p><b>Results</b> </p>
+            <label className="control-label">{extraElementValue}</label>
           </div>
         }
 

@@ -31,15 +31,14 @@
      });
    }
 
-  //  editValue(option_index, e) {
-  //    const this_element = this.state.element;
-  //    const val = (e.target.value === '') ? this._setValue(this_element.options[option_index].text) : e.target.value;
-  //    this_element.options[option_index].value = val;
-  //    this.setState({
-  //      element: this_element,
-  //      dirty: true,
-  //    });
-  //  }
+   editValue(option_index, e) {
+     const this_element = this.state.element;
+     this_element.options[option_index].operation = e.target.value;
+     this.setState({
+       element: this_element,
+       dirty: true,
+     });
+   }
 
    // eslint-disable-next-line no-unused-vars
   //  editOptionCorrect(option_index, e) {
@@ -64,7 +63,7 @@
 
    addOption(index) {
      const this_element = this.state.element;
-     this_element.options.splice(index + 1, 0, { value: '', text: '', key: ID.uuid() });
+     this_element.options.splice(index + 1, 0, { value: 'Number', text: 'Number', key: ID.uuid(), operation: '' });
      this.props.updateElement.call(this.props.preview, this_element);
    }
 
@@ -81,22 +80,23 @@
            <li>
              <div className="row">
                <div className="col-sm-6"><b>Inputs</b></div>
+               <div className="col-sm-2"><b>Operation</b></div>
              </div>
            </li>
            {
              this.props.element.options.map((option, index) => {
                const this_key = `edit_${option.key}`;
-               const val = (option.value !== this._setValue(option.text)) ? option.value : '';
+               const val = (option.operation !== this._setValue(option.operation)) ? option.operation : '';
                return (
                  <li className="clearfix" key={this_key}>
                    <div className="row">
                      <div className="col-sm-6">
                        <input tabIndex={index + 1} className="form-control" style={{ width: '100%' }} type="text" name={`text_${index}`} placeholder="hours" value={option.text} onBlur={this.updateOption.bind(this)} onChange={this.editOption.bind(this, index)} />
                      </div>
-                     {/* <div className="col-sm-2">
-                       <input className="form-control" type="text" name={`value_${index}`} value={val} onChange={this.editValue.bind(this, index)} />
+                     <div className="col-sm-2">
+                       <input className="form-control" type="text" name={`value_${index}`} value={val} onChange={this.editValue.bind(this, index)} onBlur={this.updateOption.bind(this)}/>
                      </div>
-                      <div className="col-sm-1">
+                     {/*  <div className="col-sm-1">
                        <input className="form-control" type="checkbox" value="1" onChange={this.editOptionCorrect.bind(this, index)} checked={option.hasOwnProperty('correct')} />
                      </div> */}
                      <div className="col-sm-3">

@@ -94,7 +94,6 @@ export default class ReactForm extends React.Component {
           invalid = true;
         }
       } else if (item.element === 'Math') {
-        const extraInput = this._getItemValue(item, ref).value;
         let optionFill = 0;
         item.options.forEach(option => {
           const $option = ReactDOM.findDOMNode(ref.options[`child_ref_${option.key}`]);
@@ -102,7 +101,7 @@ export default class ReactForm extends React.Component {
             optionFill += 1;
           }
         });
-        if (optionFill < 1 || extraInput < 1) {
+        if (optionFill < 1) {
           invalid = true;
         }
       } else {
@@ -132,21 +131,16 @@ export default class ReactForm extends React.Component {
       });
       itemData.value = checked_options;
     } else if (item.element === 'Math') {
-      const extraInput = this._getItemValue(item, ref).value;
       const Math_option = [];
-      let total = 0;
+      let totalString = '';
       item.options.forEach(option => {
         const $option = ReactDOM.findDOMNode(ref.options[`child_ref_${option.key}`]);
         Math_option.push({ [$option.name]: $option.value });
         if ($option.value !== undefined) {
-          const val = parseInt($option.value); //eslint-disable-line
-          total += val;
-        }
+            totalString = `${totalString} ${$option.value} ${option.operation}`;
+          }
       });
-      if (extraInput > 1) {
-        total *= extraInput;
-      }
-      itemData.value = `${item.content} ${total} ${item.label}`;
+      itemData.value = `${item.content} ${eval(totalString.replace(/[^0-9]$/g, ''))} ${item.label}`;
       // itemData.value = [];
       // itemData.value.push(Math_option);
       // itemData.value.push(extraInput);
@@ -192,14 +186,13 @@ export default class ReactForm extends React.Component {
     // Only submit if there are no errors.
     if (errors.length < 1) {
       const { onSubmit } = this.props;
-      // if (onSubmit) {
+      if (onSubmit) {
         const data = this._collectFormData(this.props.data);
-        console.log('data', data);
-      //   onSubmit(data);
-      // } else {
-      //   const $form = ReactDOM.findDOMNode(this.form);
-      //   $form.submit();
-      // }
+        onSubmit(data);
+      } else {
+        const $form = ReactDOM.findDOMNode(this.form);
+        $form.submit();
+      }
     }
   }
 
