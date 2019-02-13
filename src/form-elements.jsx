@@ -7,6 +7,7 @@ import ReactBootstrapSlider from 'react-bootstrap-slider';
 import ReactDatePicker from 'react-datepicker';
 import StarRating from './star-rating';
 import HeaderBar from './header-bar';
+import ReactDOM from 'react-dom';
 
 const FormElements = {};
 const myxss = new xss.FilterXSS({
@@ -28,6 +29,7 @@ const myxss = new xss.FilterXSS({
   },
 });
 
+const inputNumber = {};
 const ComponentLabel = (props) => {
   const hasRequiredLabel = (props.data.hasOwnProperty('required') && props.data.required === true && !props.read_only);
 
@@ -92,8 +94,7 @@ class Math extends React.Component {
 
   handleMath = () => {
     const { options } = this.props.data;
-    const { optionValue, totalPay } = this.state;
-    let total = 0;
+    const { optionValue } = this.state;
     let totalString = '';
     options.map((option) => { //eslint-disable-line
 
@@ -102,10 +103,8 @@ class Math extends React.Component {
         totalString = `${totalString} ${optionValue[`option_${option.key}`]} ${option.operation}`;
       }
     });
-    this.setState({totalString});
+    this.setState({ totalString });
   }
-
-
 
   render() {
     const self = this;
@@ -114,11 +113,27 @@ class Math extends React.Component {
 
     let baseClasses = 'SortableItem rfb-item';
     if (this.props.data.pageBreakBefore) { baseClasses += ' alwaysbreak'; }
-    let extraElementValue = ''
+    const NumberElements = this.props.items.filter(item => item.element === 'NumberInput');
+    let extraElementValue = '';
+    this.props.data.options.map((item) => { // eslint-disable-line
+      const element = NumberElements.filter(elementItem => elementItem.field_name === item.field_name);
+      if(element.length > 0) {
+
+        extraElementValue = `${extraElementValue} ${element[0].label} ${item.operation}`;
+      }
+    });
+let numberValue = '';
+    if(this.props.inputs !== undefined){
+
       this.props.data.options.map((item) => {
-        extraElementValue = `${extraElementValue} ${item.value} ${item.operation}`
-      })
-      // console.log('this.props.data.options', this.props.data.options);
+        if(this.props.inputs[item.field_name] !== undefined && this.props.inputs[item.field_name] !== '') {
+        numberValue = `${numberValue} ${this.props.inputs[item.field_name]} ${item.operation}`;
+        }
+        else {
+          numberValue = `${numberValue} 0 ${item.operation}`;
+        }
+      });
+    }
     return (
       <div className={baseClasses}>
         <ComponentHeader {...this.props} />
@@ -126,7 +141,7 @@ class Math extends React.Component {
         { this.props.defaultValue === undefined ?
           (<div className="form-group">
           {/* <p dangerouslySetInnerHTML={{ __html: myxss.process(this.props.data.content) }} /> */}
-            <div className="row">
+            {/* <div className="row">
               {this.props.data.options.map((option) => {
                 const this_key = `preview_${option.key}`;
                 const props = {};
@@ -141,7 +156,7 @@ class Math extends React.Component {
                 props.min = '0';
                 return (
                   <div className={classNames} key={this_key}>
-                    {/* <input {...props} /> */}
+                    <p style={{ marginBottom: 'auto' }}>{option.text}</p>
                     <input ref={c => {
                       if (c && self.props.mutable) {
                         self.options[`child_ref_${option.key}`] = c;
@@ -150,7 +165,7 @@ class Math extends React.Component {
                   </div>
                 );
               })}
-            </div>
+            </div> */}
             <div className="row">
               <div className="col-md-12" style={{ padding: '10px' }}>
                 {/* <input
@@ -172,7 +187,7 @@ class Math extends React.Component {
                 {/* {`${this.props.data.content} ${this.state.totalCount} ${this.props.data.label}`} */}
                 {/* {`${this.state.totalString.replace(/[^0-9]$/g, '')} =  ${eval(this.state.totalString.replace(/[^0-9]$/g, ''))}`} */}
                 <p><span dangerouslySetInnerHTML={{ __html: myxss.process(this.props.data.content) }} />
-                {` ${this.state.totalString !== '' ? eval(this.state.totalString.replace(/[^0-9]$/g, '')) : ''} `}
+                {` ${numberValue !== '' ? parseFloat(parseFloat(eval(numberValue.replace(/[^0-9]$/g, ''))).toFixed(2)) : ''} `}
                 <span dangerouslySetInnerHTML={{ __html: myxss.process(this.props.data.label) }} />
                 </p>
               </div>
@@ -282,6 +297,10 @@ class NumberInput extends React.Component {
     this.inputField = React.createRef();
   }
 
+  handleNumberChange = (e, key) => {
+    inputNumber[key] = e.target.value;
+  }
+
   render() {
     const props = {};
     props.type = 'number';
@@ -305,7 +324,10 @@ class NumberInput extends React.Component {
         <ComponentHeader {...this.props} />
         <div className="form-group">
           <ComponentLabel {...this.props} />
-          <input {...props} />
+          <input
+          {...props}
+          onChange={this.props.handleChange}
+          />
         </div>
       </div>
     );

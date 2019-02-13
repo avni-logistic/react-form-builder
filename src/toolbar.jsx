@@ -46,9 +46,7 @@ export default class Toolbar extends React.Component {
         ];
       case 'Math':
         return [
-          { value: 'Number', text: 'Number', key: `math_option_${ID.uuid()}`, operation: '+' },
-          { value: 'Number', text: 'Number', key: `math_option_${ID.uuid()}`, operation: '+' },
-          { value: 'Number', text: 'Number', key: `math_option_${ID.uuid()}`, operation: '' },
+          { field_name: '', key: `math_option_${ID.uuid()}`, operation: '+' }
         ];
       default:
         return [];
@@ -61,12 +59,11 @@ export default class Toolbar extends React.Component {
         key: 'Math',
         name: 'Math',
         icon: 'fa fa-plus',
-        canHaveAnswer: true,
         content: 'Placeholder Text...',
         options: [],
         label: 'Placeholder Label',
         field_name: 'math_',
-        extraInput: ''
+        extraInput: '',
       },
       {
         key: 'Header',

@@ -20,6 +20,9 @@ export default class ReactForm extends React.Component {
   constructor(props) {
     super(props);
     this.emitter = new EventEmitter();
+    this.state = {
+      numberValue: {}
+    }
   }
 
   _checkboxesDefaultValue(item) {
@@ -94,18 +97,12 @@ export default class ReactForm extends React.Component {
           invalid = true;
         }
       } else if (item.element === 'Math') {
-        let optionFill = 0;
-        item.options.forEach(option => {
-          const $option = ReactDOM.findDOMNode(ref.options[`child_ref_${option.key}`]);
-          if ($option.value !== undefined || $option.value !== '') {
-            optionFill += 1;
-          }
-        });
-        if (optionFill < 1) {
+
+        if (Object.keys(this.state.numberValue).length === 0) {
           invalid = true;
         }
       } else {
-        const $item = this._getItemValue(item, ref);
+        const $item = this._getItemValue(item, f);
         if (item.element === 'Rating') {
           if ($item.value === 0) {
             invalid = true;
@@ -131,16 +128,28 @@ export default class ReactForm extends React.Component {
       });
       itemData.value = checked_options;
     } else if (item.element === 'Math') {
-      const Math_option = [];
-      let totalString = '';
-      item.options.forEach(option => {
-        const $option = ReactDOM.findDOMNode(ref.options[`child_ref_${option.key}`]);
-        Math_option.push({ [$option.name]: $option.value });
-        if ($option.value !== undefined) {
-            totalString = `${totalString} ${$option.value} ${option.operation}`;
-          }
+      let numberValue = '';
+
+
+      item.options.map((item) => {
+        if(this.state.numberValue[item.field_name] !== undefined && this.state.numberValue[item.field_name] !== '') {
+        numberValue = `${numberValue} ${this.state.numberValue[item.field_name]} ${item.operation}`;
+        }
+        else {
+          numberValue = `${numberValue} 0 ${item.operation}`;
+        }
       });
-      itemData.value = `${item.content} ${eval(totalString.replace(/[^0-9]$/g, ''))} ${item.label}`;
+
+      // const Math_option = [];
+      // let totalString = '';
+      // item.options.forEach(option => {
+      //   const $option = ReactDOM.findDOMNode(ref.options[`child_ref_${option.key}`]);
+      //   Math_option.push({ [$option.name]: $option.value });
+      //   if ($option.value !== undefined) {
+      //       totalString = `${totalString} ${$option.value} ${option.operation}`;
+      //     }
+      // });
+      itemData.value = `${item.content} ${parseFloat(parseFloat(eval(numberValue.replace(/[^0-9]$/g, ''))).toFixed(2))} ${item.label}`;
       // itemData.value = [];
       // itemData.value.push(Math_option);
       // itemData.value.push(extraInput);
@@ -225,10 +234,14 @@ export default class ReactForm extends React.Component {
     return errors;
   }
 
+  handleInputChange = (event, field_name) => {
+    this.setState({numberValue: { ...this.state.numberValue, [field_name]: event.target.value }});
+  }
+
   getInputElement(item) {
     const Input = FormElements[item.element];
     return (<Input
-      handleChange={this.handleChange}
+      handleChange={e => this.handleInputChange(e,item.field_name)}
       ref={c => this.inputs[item.field_name] = c}
       mutable={true}
       key={`form_${item.id}`}
@@ -254,7 +267,6 @@ export default class ReactForm extends React.Component {
         this.props.answer_data[item.field_name] = this.props.variables[item.variableKey];
       }
     });
-
     const items = data_items.map(item => {
       switch (item.element) {
         case 'TextInput':
@@ -272,7 +284,7 @@ export default class ReactForm extends React.Component {
         case 'Checkboxes':
           return <Checkboxes ref={c => this.inputs[item.field_name] = c} read_only={this.props.read_only} handleChange={this.handleChange} mutable={true} key={`form_${item.id}`} data={item} defaultValue={this.props.answer_data[item.field_name]} />;
         case 'Math':
-          return <Math ref={c => this.inputs[item.field_name] = c} read_only={this.props.read_only} handleChange={this.handleChange} mutable={true} key={`form_${item.id}`} data={item} defaultValue={this.props.answer_data[item.field_name]} />;
+          return <Math ref={c => this.inputs[item.field_name] = c} read_only={this.props.read_only} handleChange={this.handleChange} mutable={true} key={`form_${item.id}`} data={item} defaultValue={this.props.answer_data[item.field_name]} items={this.props.data} inputs={this.state.numberValue} />;
         case 'Image':
           return <Image ref={c => this.inputs[item.field_name] = c} handleChange={this.handleChange} mutable={true} key={`form_${item.id}`} data={item} defaultValue={this.props.answer_data[item.field_name]} />;
         case 'Download':
@@ -287,7 +299,6 @@ export default class ReactForm extends React.Component {
     const formTokenStyle = {
       display: 'none',
     };
-
     const actionName = (this.props.action_name) ? this.props.action_name : 'Submit';
     const backName = (this.props.back_name) ? this.props.back_name : 'Cancel';
     return (

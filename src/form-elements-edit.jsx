@@ -100,15 +100,20 @@ export default class FormElementsEdit extends React.Component {
     if (this.props.element.hasOwnProperty('label')) {
       editorStateLabel = this.convertFromHTML(this.props.element.label);
     }
-    let extraElementValue;
-    if(this.state.element.element === 'Math')
+    let extraElementValue = '';
+    if(this.props.element.element === 'Math')
     {
-      let value = '';
-      this.state.element.options.map((item) => {
-        value = `${value} ${item.value} ${item.operation}`
-      })
-      extraElementValue = value;
+      const NumberElements = this.props.items.filter(item => item.element === 'NumberInput');
+      this.props.element.options.map((item) => { // eslint-disable-line
+      const element = NumberElements.filter(elementItem => elementItem.field_name === item.field_name);
+        if(element.length > 0) {
+
+          extraElementValue = `${extraElementValue} ${element[0].label} ${item.operation}`;
+        }
+      });
     }
+
+
     return (
       <div>
         <div className="clearfix">
@@ -170,14 +175,14 @@ export default class FormElementsEdit extends React.Component {
         }
 
         { this.props.element.hasOwnProperty('options') && this.state.element.element === 'Math' &&
-          <DynamicInputList showCorrectColumn={this.props.showCorrectColumn} data={this.props.preview.state.data} updateElement={this.props.updateElement} preview={this.props.preview} element={this.props.element} key={this.props.element.options.length} />
+          <DynamicInputList showCorrectColumn={this.props.showCorrectColumn} data={this.props.preview.state.data} updateElement={this.props.updateElement} preview={this.props.preview} element={this.props.element} key={this.props.element.options.length} items={this.props.items}/>
         }
 
         { this.props.element.hasOwnProperty('extraInput') && this.state.element.element === 'Math' &&
           <div className="form-group">
             {/* <input id="correctAnswer" type="text" placeholder="Hourly Pay" className="form-control" defaultValue={extraElementValue} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'extraInput', 'value')} /> */}
-            <p><b>Results</b> </p>
-            <label className="control-label">{extraElementValue}</label>
+            <p style={{ marginBottom: 'auto' }}><b>Results</b></p>
+            <label style={{ marginTop: '0' }} className="control-label">{extraElementValue.replace(/[^0-9]$/g, '')}</label>
           </div>
         }
 
